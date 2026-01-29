@@ -49,7 +49,7 @@ Para dúvidas sobre esta política, entre em contato: contato@pascoart.com.br`;
               <img 
                 src="/images/branding/logo_full.png" 
                 alt="PáscoArt" 
-                className="h-24 w-auto mb-4"
+                className="h-48 w-auto mb-4"
               />
               <p className="text-muted-foreground text-sm leading-relaxed">
                 Transformamos o cacau em experiências inesquecíveis. Chocolate artesanal de qualidade premium para sua Páscoa.
@@ -101,14 +101,14 @@ Para dúvidas sobre esta política, entre em contato: contato@pascoart.com.br`;
             <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mb-8 text-xs sm:text-sm">
               <button 
                 onClick={() => setShowPrivacyModal(true)}
-                className="text-muted-foreground hover:text-primary transition-colors font-medium"
+                className="text-muted-foreground hover:text-primary transition-colors font-medium cursor-pointer"
               >
                 Política de Privacidade
               </button>
               <span className="text-border">|</span>
               <button 
                 onClick={() => setShowCookiesModal(true)}
-                className="text-muted-foreground hover:text-primary transition-colors font-medium"
+                className="text-muted-foreground hover:text-primary transition-colors font-medium cursor-pointer"
               >
                 Política de Cookies
               </button>

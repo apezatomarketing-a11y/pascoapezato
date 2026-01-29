@@ -2,7 +2,7 @@ import Layout from '@/components/Layout';
 import { useModal } from '@/components/ModalProvider';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { ArrowRight, ShoppingCart, Heart, Sparkles, CheckCircle2, TrendingUp } from 'lucide-react';
+import { ArrowRight, ShoppingCart, Heart, Sparkles, CheckCircle2, TrendingUp, Search, PenTool, Code2, Rocket, Award, Clock } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
 import AnimatedHeadline from '@/components/AnimatedHeadline';

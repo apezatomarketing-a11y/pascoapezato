@@ -23,7 +23,7 @@ export function useAuth() {
 
     // Listener para mudanças de autenticação
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (_event, session) => {
         if (session?.user) {
           const userData = await getCurrentUser()
           setUser(userData)

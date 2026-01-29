@@ -145,7 +145,12 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased easter-egg-pattern;
+    @apply bg-background text-foreground font-sans antialiased;
+    background-color: #FFFDD0;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600"><defs><style>.egg{fill:none;stroke:%237B3F00;stroke-width:3;opacity:0.1;} .egg-accent{fill:none;stroke:%23D2691E;stroke-width:2;opacity:0.08;}</style></defs><ellipse class="egg" cx="100" cy="150" rx="50" ry="70"/><ellipse class="egg-accent" cx="300" cy="200" rx="55" ry="75"/><ellipse class="egg" cx="200" cy="400" rx="52" ry="72"/><ellipse class="egg-accent" cx="80" cy="500" rx="48" ry="68"/><ellipse class="egg" cx="320" cy="520" rx="50" ry="70"/><ellipse class="egg-accent" cx="200" cy="80" rx="46" ry="65"/><ellipse class="egg" cx="350" cy="350" rx="48" ry="68"/><ellipse class="egg-accent" cx="50" cy="300" rx="52" ry="72"/></svg>');
+    background-size: 600px 900px;
+    background-attachment: fixed;
+    background-repeat: repeat;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-bold tracking-tight;
@@ -164,21 +169,7 @@
 }
 
 @layer components {
-  /* Easter Egg Pattern Background - SVG Eggs */
-  .easter-egg-pattern {
-    background-color: #FFFDD0;
-    background-image: 
-      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300"><defs><style>.egg{fill:none;stroke:%237B3F00;stroke-width:2;opacity:0.12;}</style></defs><ellipse class="egg" cx="50" cy="80" rx="35" ry="50"/><ellipse class="egg" cx="150" cy="120" rx="40" ry="55"/><ellipse class="egg" cx="100" cy="200" rx="38" ry="52"/><ellipse class="egg" cx="30" cy="250" rx="32" ry="48"/><ellipse class="egg" cx="170" cy="260" rx="36" ry="50"/><ellipse class="egg" cx="120" cy="40" rx="34" ry="46"/></svg>');
-    background-size: 400px 600px;
-    background-attachment: fixed;
-    background-repeat: repeat;
-    animation: float-eggs 20s ease-in-out infinite;
-  }
 
-  @keyframes float-eggs {
-    0%, 100% { background-position: 0 0; }
-    50% { background-position: 20px 20px; }
-  }
 
   .container {
     width: 100%;
@@ -230,15 +221,7 @@
     animation: counter 0.3s ease-out;
   }
 
-  /* Background with animated egg pattern */
-  body.easter-egg-pattern {
-    background-color: #FFFDD0;
-    background-image: 
-      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600"><defs><style>.egg{fill:none;stroke:%237B3F00;stroke-width:3;opacity:0.1;} .egg-accent{fill:none;stroke:%23D2691E;stroke-width:2;opacity:0.08;}</style></defs><ellipse class="egg" cx="100" cy="150" rx="50" ry="70"/><ellipse class="egg-accent" cx="300" cy="200" rx="55" ry="75"/><ellipse class="egg" cx="200" cy="400" rx="52" ry="72"/><ellipse class="egg-accent" cx="80" cy="500" rx="48" ry="68"/><ellipse class="egg" cx="320" cy="520" rx="50" ry="70"/><ellipse class="egg-accent" cx="200" cy="80" rx="46" ry="65"/><ellipse class="egg" cx="350" cy="350" rx="48" ry="68"/><ellipse class="egg-accent" cx="50" cy="300" rx="52" ry="72"/></svg>');
-    background-size: 600px 900px;
-    background-attachment: fixed;
-    background-repeat: repeat;
-  }
+
 
   @media (min-width: 640px) {
     .container {

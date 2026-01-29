@@ -7,6 +7,36 @@ export default function Footer() {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showCookiesModal, setShowCookiesModal] = useState(false);
 
+  const privacyContent = `A PáscoArt respeita sua privacidade e está comprometida em proteger seus dados pessoais. Esta Política de Privacidade explica como coletamos, usamos e protegemos suas informações.
+
+COLETA DE DADOS
+Coletamos informações que você nos fornece voluntariamente, como nome, email e endereço para processar pedidos. Também coletamos dados de navegação através de cookies para melhorar sua experiência.
+
+USO DE DADOS
+Seus dados são utilizados apenas para:
+• Fornecer nossos serviços e processar pedidos
+• Melhorar sua experiência no site
+• Enviar comunicações sobre seus pedidos
+• Análise de uso do site para otimização
+
+PROTEÇÃO DE DADOS
+Implementamos medidas de segurança apropriadas para proteger seus dados contra acesso não autorizado, alteração, divulgação ou destruição.
+
+COMPARTILHAMENTO DE DADOS
+Não compartilhamos seus dados pessoais com terceiros, exceto quando necessário para processar seu pedido (como transportadoras) ou conforme exigido por lei.
+
+RETENÇÃO DE DADOS
+Retemos seus dados apenas pelo tempo necessário para fornecer nossos serviços e cumprir obrigações legais.
+
+DIREITOS DO USUÁRIO
+Você tem o direito de acessar, corrigir ou solicitar a exclusão de seus dados pessoais. Entre em contato conosco através do email contato@pascoart.com.br.
+
+ALTERAÇÕES NA POLÍTICA
+Podemos atualizar esta política periodicamente. Notificaremos você sobre mudanças significativas através do site.
+
+CONTATO
+Para dúvidas sobre esta política, entre em contato: contato@pascoart.com.br`;
+
   const currentYear = new Date().getFullYear();
 
   return (
@@ -131,22 +161,8 @@ export default function Footer() {
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <div className="p-6 space-y-4 text-sm text-muted-foreground">
-              <p>
-                A PáscoArt respeita sua privacidade e está comprometida em proteger seus dados pessoais. Esta Política de Privacidade explica como coletamos, usamos e protegemos suas informações.
-              </p>
-              <h3 className="font-bold text-foreground">Coleta de Dados</h3>
-              <p>
-                Coletamos informações que você nos fornece voluntariamente, como nome, email e endereço para processar pedidos.
-              </p>
-              <h3 className="font-bold text-foreground">Uso de Dados</h3>
-              <p>
-                Seus dados são utilizados apenas para fornecer nossos serviços, processar pedidos e melhorar sua experiência.
-              </p>
-              <h3 className="font-bold text-foreground">Proteção de Dados</h3>
-              <p>
-                Implementamos medidas de segurança apropriadas para proteger seus dados contra acesso não autorizado.
-              </p>
+            <div className="p-6 space-y-4 text-sm text-muted-foreground whitespace-pre-wrap">
+              {privacyContent}
             </div>
           </motion.div>
         </motion.div>

@@ -52,7 +52,7 @@ export default function Contato() {
   return (
     <Layout>
       <section className="py-20 bg-muted/30">
-        <div className="container">
+        <div className="container max-w-7xl">
           <div className="max-w-4xl mx-auto text-center mb-16">
             <motion.h1 
               initial={{ opacity: 0, y: -20 }}
@@ -95,7 +95,7 @@ export default function Contato() {
                   </div>
                   <div>
                     <h3 className="font-bold text-lg">WhatsApp</h3>
-                    <p className="text-muted-foreground">(12) 99189-5547</p>
+                    <a href="https://wa.me/5512991895547" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">(12) 99189-5547</a>
                   </div>
                 </div>
                 
@@ -105,9 +105,22 @@ export default function Contato() {
                   </div>
                   <div>
                     <h3 className="font-bold text-lg">E-mail</h3>
-                    <p className="text-muted-foreground">contato@pascoart.com.br</p>
+                    <a href="mailto:contato@pascoart.com.br" className="text-primary hover:underline">contato@pascoart.com.br</a>
                   </div>
                 </div>
+              </div>
+
+              {/* Google Maps */}
+              <div className="rounded-3xl overflow-hidden border border-border shadow-lg h-80">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3647.8217895742!2d-46.4039!3d-24.0047!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94d1d0c0c0c0c0c1%3A0xc0c0c0c0c0c0c0c0!2sPraia%20Grande%2C%20SP!5e0!3m2!1spt-BR!2sbr!4v1234567890"
+                />
               </div>
             </motion.div>
 

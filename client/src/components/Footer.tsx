@@ -1,116 +1,202 @@
-import { scrollToTop } from '@/lib/utils';
+import { useState } from 'react';
 import { Link } from 'wouter';
-import { useModal } from './ModalProvider';
-import WhatsappIcon from './WhatsappIcon';
-import { Mail, MapPin, Instagram } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { X } from 'lucide-react';
 
 export default function Footer() {
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showCookiesModal, setShowCookiesModal] = useState(false);
+
   const currentYear = new Date().getFullYear();
-  const { openModal } = useModal();
 
   return (
-    <footer className="bg-gradient-to-b from-background to-muted/30 border-t-2 border-primary/20 pt-16 pb-8">
-      <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          {/* Brand Column */}
-          <div className="flex flex-col gap-6">
-            <Link href="/" className="flex items-center gap-2 group cursor-pointer" onClick={scrollToTop}>
+    <>
+      <footer className="bg-muted/30 border-t border-border/50 pt-16 pb-8">
+        <div className="container max-w-7xl">
+          <div className="grid md:grid-cols-4 gap-12 mb-16">
+            {/* Brand */}
+            <div className="md:col-span-1">
               <img 
                 src="/images/branding/logo_full.png" 
-                alt="PáscoArt Logo" 
-                className="h-20 w-auto transition-transform duration-300 group-hover:scale-105" 
+                alt="PáscoArt" 
+                className="h-24 w-auto mb-4"
               />
-            </Link>
-            <p className="text-muted-foreground leading-relaxed">
-              Ovos de páscoa artesanais com sabores irresistíveis. Cada ovo é uma obra-prima de chocolate que traz alegria e sabor para sua Páscoa.
-            </p>
-            <div className="flex items-center gap-4">
-              <a href="https://www.instagram.com/pascoart2026/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110 hover:-translate-y-1 cursor-pointer">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="https://wa.me/5512991895547" target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110 hover:-translate-y-1 cursor-pointer">
-                <WhatsappIcon className="w-5 h-5" />
-              </a>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Transformamos o cacau em experiências inesquecíveis. Chocolate artesanal de qualidade premium para sua Páscoa.
+              </p>
+            </div>
+
+            {/* Links */}
+            <div>
+              <h3 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">Navegação</h3>
+              <ul className="space-y-3">
+                <li><Link href="/"><a className="text-muted-foreground hover:text-primary transition-colors">Início</a></Link></li>
+                <li><Link href="/produtos"><a className="text-muted-foreground hover:text-primary transition-colors">Produtos</a></Link></li>
+                <li><Link href="/contato"><a className="text-muted-foreground hover:text-primary transition-colors">Contato</a></Link></li>
+              </ul>
+            </div>
+
+            {/* Contato */}
+            <div>
+              <h3 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">Contato</h3>
+              <ul className="space-y-3 text-muted-foreground text-sm">
+                <li>
+                  <a href="https://wa.me/551399999999" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                    WhatsApp
+                  </a>
+                </li>
+                <li>
+                  <a href="mailto:contato@pascoart.com.br" className="hover:text-primary transition-colors">
+                    contato@pascoart.com.br
+                  </a>
+                </li>
+                <li>Praia Grande, SP</li>
+              </ul>
+            </div>
+
+            {/* Redes Sociais */}
+            <div>
+              <h3 className="font-bold text-foreground mb-6 uppercase text-sm tracking-wider">Redes Sociais</h3>
+              <ul className="space-y-3">
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">Instagram</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">Facebook</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">TikTok</a></li>
+              </ul>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="font-bold text-lg mb-6 text-foreground">Links Rápidos</h3>
-            <ul className="flex flex-col gap-3">
-              <li>
-                <Link href="/" className="text-muted-foreground hover:text-primary transition-colors cursor-pointer" onClick={scrollToTop}>
-                  Início
-                </Link>
-              </li>
-              <li>
-                <Link href="/produtos" className="text-muted-foreground hover:text-primary transition-colors cursor-pointer" onClick={scrollToTop}>
-                  Produtos
-                </Link>
-              </li>
-              <li>
-                <Link href="/contato" className="text-muted-foreground hover:text-primary transition-colors cursor-pointer" onClick={scrollToTop}>
-                  Contato
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Divider */}
+          <div className="border-t border-border/50 pt-8 mb-8">
+            {/* Policies */}
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mb-8 text-xs sm:text-sm">
+              <button 
+                onClick={() => setShowPrivacyModal(true)}
+                className="text-muted-foreground hover:text-primary transition-colors font-medium"
+              >
+                Política de Privacidade
+              </button>
+              <span className="text-border">|</span>
+              <button 
+                onClick={() => setShowCookiesModal(true)}
+                className="text-muted-foreground hover:text-primary transition-colors font-medium"
+              >
+                Política de Cookies
+              </button>
+            </div>
 
-          {/* Categorias */}
-          <div>
-            <h3 className="font-bold text-lg mb-6 text-foreground">Categorias</h3>
-            <ul className="flex flex-col gap-3">
-              <li>
-                <Link href="/produtos" className="text-muted-foreground hover:text-primary transition-colors cursor-pointer">Ovo de Colher</Link>
-              </li>
-              <li>
-                <Link href="/produtos" className="text-muted-foreground hover:text-primary transition-colors cursor-pointer">Casca Recheada</Link>
-              </li>
-              <li>
-                <Link href="/produtos" className="text-muted-foreground hover:text-primary transition-colors cursor-pointer">Mini Ovos</Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h3 className="font-bold text-lg mb-6 text-foreground">Contato</h3>
-            <ul className="flex flex-col gap-4">
-              <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-primary shrink-0 mt-1" />
-                <span className="text-muted-foreground">Praia Grande - SP</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <WhatsappIcon className="w-5 h-5 text-primary shrink-0" />
-                <a href="https://wa.me/5512991895547" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                  (12) 99189-5547
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-primary shrink-0" />
-                <a href="mailto:contato@pascoart.com.br" className="text-muted-foreground hover:text-primary transition-colors">
-                  contato@pascoart.com.br
-                </a>
-              </li>
-            </ul>
+            {/* Copyright and Credit */}
+            <div className="text-center space-y-4">
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                © {currentYear} PáscoArt. Todos os direitos reservados.
+              </p>
+              
+              <div className="flex items-center justify-center">
+                <motion.a
+                  href="https://www.apezatomarketing.com.br"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent hover:opacity-80 transition-opacity"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  Desenvolvido por Apezato Marketing
+                </motion.a>
+              </div>
+            </div>
           </div>
         </div>
+      </footer>
 
-        <div className="border-t border-border pt-8 flex flex-col items-center justify-center gap-6">
-          <div className="flex items-center gap-6 text-sm justify-center flex-wrap">
-            <button onClick={() => openModal('privacy')} className="text-muted-foreground hover:text-primary transition-colors cursor-pointer font-semibold">
-              Política de Privacidade
-            </button>
-            <span className="text-border">|</span>
-            <button onClick={() => openModal('terms')} className="text-muted-foreground hover:text-primary transition-colors cursor-pointer font-semibold">
-              Termos de Uso
-            </button>
-          </div>
-          <p className="text-sm text-muted-foreground text-center">
-            &copy; {currentYear} PáscoArt. Todos os direitos reservados.
-          </p>
-        </div>
-      </div>
-    </footer>
+      {/* Privacy Modal */}
+      {showPrivacyModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowPrivacyModal(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-background rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-border/50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-background border-b border-border/50 p-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Política de Privacidade</h2>
+              <button
+                onClick={() => setShowPrivacyModal(false)}
+                className="p-2 hover:bg-muted rounded-lg transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4 text-sm text-muted-foreground">
+              <p>
+                A PáscoArt respeita sua privacidade e está comprometida em proteger seus dados pessoais. Esta Política de Privacidade explica como coletamos, usamos e protegemos suas informações.
+              </p>
+              <h3 className="font-bold text-foreground">Coleta de Dados</h3>
+              <p>
+                Coletamos informações que você nos fornece voluntariamente, como nome, email e endereço para processar pedidos.
+              </p>
+              <h3 className="font-bold text-foreground">Uso de Dados</h3>
+              <p>
+                Seus dados são utilizados apenas para fornecer nossos serviços, processar pedidos e melhorar sua experiência.
+              </p>
+              <h3 className="font-bold text-foreground">Proteção de Dados</h3>
+              <p>
+                Implementamos medidas de segurança apropriadas para proteger seus dados contra acesso não autorizado.
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Cookies Modal */}
+      {showCookiesModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowCookiesModal(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="bg-background rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-border/50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-background border-b border-border/50 p-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Política de Cookies</h2>
+              <button
+                onClick={() => setShowCookiesModal(false)}
+                className="p-2 hover:bg-muted rounded-lg transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4 text-sm text-muted-foreground">
+              <p>
+                A PáscoArt utiliza cookies para melhorar sua experiência de navegação em nosso site.
+              </p>
+              <h3 className="font-bold text-foreground">O que são Cookies?</h3>
+              <p>
+                Cookies são pequenos arquivos de texto armazenados no seu navegador que nos ajudam a entender suas preferências.
+              </p>
+              <h3 className="font-bold text-foreground">Tipos de Cookies</h3>
+              <p>
+                Utilizamos cookies essenciais para o funcionamento do site, cookies de análise para entender como você usa nosso site, e cookies de marketing para personalizar sua experiência.
+              </p>
+              <h3 className="font-bold text-foreground">Controle de Cookies</h3>
+              <p>
+                Você pode controlar ou desabilitar cookies através das configurações do seu navegador, mas isso pode afetar a funcionalidade do site.
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </>
   );
 }

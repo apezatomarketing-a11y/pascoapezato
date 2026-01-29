@@ -1,150 +1,113 @@
-import { useThemeStore } from '@/lib/store';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Menu, Moon, Sun, X } from 'lucide-react';
+import { Menu, X, ShoppingCart } from 'lucide-react';
+import { useCartStore } from '@/lib/store';
 import { scrollToTop } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 
 export default function Header() {
-  const { theme, toggleTheme } = useThemeStore();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location] = useLocation();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const { items } = useCartStore();
+  const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const navItems = [
-    { name: 'Início', path: '/' },
-    { name: 'Produtos', path: '/produtos' },
-    { name: 'Contato', path: '/contato' },
+    { href: '/', label: 'Início' },
+    { href: '/produtos', label: 'Produtos' },
+    { href: '/contato', label: 'Contato' },
   ];
 
+  const isActive = (href: string) => location === href;
+
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'py-2 bg-background/80 backdrop-blur-lg border-b border-border/50 shadow-sm' : 'py-4 bg-transparent'
-      }`}
-    >
-      <div className="container flex items-center justify-between">
-        {/* Logo - PáscoArt com Imagem do Ovo */}
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container max-w-7xl flex items-center justify-between h-16 sm:h-20">
+        {/* Logo */}
         <Link href="/">
-          <a className="flex items-center gap-3 group" onClick={scrollToTop}>
-            <div className="flex items-center gap-3 group">
-              <img 
-                src="/images/branding/logo_egg.png" 
-                alt="PáscoArt Logo" 
-                className="h-10 w-auto transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" 
-              />
-              <img 
-                src="/images/branding/logo_text.png" 
-                alt="PáscoArt" 
-                className="h-8 w-auto hidden sm:block" 
-              />
-              <span className="text-2xl font-bold text-foreground sm:hidden">PáscoArt</span>
-            </div>
+          <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <img 
+              src="/images/branding/logo_egg.png" 
+              alt="PáscoArt" 
+              className="h-10 sm:h-12 w-auto"
+            />
+            <img 
+              src="/images/branding/logo_text.png" 
+              alt="PáscoArt Text" 
+              className="h-6 sm:h-8 w-auto hidden sm:block"
+            />
           </a>
         </Link>
 
-        {/* Desktop Navigation - Simplified */}
-        <nav className="hidden lg:flex items-center gap-10">
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => (
-            <div key={item.name} className="relative group">
-              <Link href={item.path}>
-                <a
-                  className={`text-sm font-bold uppercase tracking-wider transition-colors hover:text-primary ${
-                    location === item.path ? 'text-primary' : 'text-foreground/80'
-                  }`}
-                  onClick={() => scrollToTop()}
-                >
-                  {item.name}
-                </a>
-              </Link>
-              <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 ${location === item.path ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-            </div>
+            <Link key={item.href} href={item.href}>
+              <a className={`px-4 py-2 rounded-lg font-bold transition-all duration-300 ${
+                isActive(item.href)
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+              }`}>
+                {item.label}
+              </a>
+            </Link>
           ))}
         </nav>
 
-        {/* Actions */}
-        <div className="flex items-center gap-4">
+        {/* Right Actions */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Link href="/produtos">
+            <button 
+              className="relative hover:bg-primary/10 group p-2 rounded-lg transition-colors"
+            >
+              <ShoppingCart className="w-5 sm:w-6 h-5 sm:h-6 group-hover:scale-110 transition-transform" />
+              {cartCount > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                >
+                  {cartCount}
+                </motion.span>
+              )}
+            </button>
+          </Link>
+
+          {/* Mobile Menu Button */}
           <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-muted transition-colors text-foreground/80 hover:text-primary"
-            aria-label="Alternar tema"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 hover:bg-muted rounded-lg transition-colors"
           >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={theme}
-                initial={{ y: -20, opacity: 0, rotate: -90 }}
-                animate={{ y: 0, opacity: 1, rotate: 0 }}
-                exit={{ y: 20, opacity: 0, rotate: 90 }}
-                transition={{ duration: 0.2 }}
-              >
-                {theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-              </motion.div>
-            </AnimatePresence>
-          </button>
-          
-          {/* Mobile Menu Toggle */}
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="lg:hidden p-2 text-foreground hover:text-primary transition-colors"
-          >
-            <Menu className="w-6 h-6" />
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Navigation */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"
-            />
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-[80%] max-w-sm bg-background border-l border-border z-50 lg:hidden flex flex-col shadow-2xl"
-            >
-              <div className="p-6 flex items-center justify-between border-b border-border/50">
-                <span className="font-heading font-bold text-xl">Menu</span>
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 hover:bg-muted rounded-full transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              
-              <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8">
-                {navItems.map((item) => (
-                  <Link key={item.name} href={item.path}>
-                    <a
-                      className="text-2xl font-bold text-foreground/90 hover:text-primary transition-colors"
-                      onClick={() => {
-                        setMobileMenuOpen(false);
-                        scrollToTop();
-                      }}
-                    >
-                      {item.name}
-                    </a>
-                  </Link>
-                ))}
-              </div>
-            </motion.div>
-          </>
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden border-t border-border/40 bg-background"
+          >
+            <nav className="container max-w-7xl flex flex-col gap-2 py-4">
+              {navItems.map((item) => (
+                <Link key={item.href} href={item.href}>
+                  <a 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-4 py-3 rounded-lg font-bold transition-all duration-300 block ${
+                      isActive(item.href)
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                </Link>
+              ))}
+            </nav>
+          </motion.div>
         )}
       </AnimatePresence>
     </header>

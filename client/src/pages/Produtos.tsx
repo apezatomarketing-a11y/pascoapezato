@@ -1,18 +1,20 @@
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
-import { ShoppingCart, Heart, Star, Search } from 'lucide-react';
-import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingCart, Heart, Star, Search, Plus, Sparkles, ChevronRight, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useCartStore } from '@/lib/store';
+import { toast } from 'sonner';
 
 export default function Produtos() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const { addItem } = useCartStore();
 
   const categories = [
-    { id: 'all', name: 'Todos os Produtos' },
-    { id: 'colher', name: 'Ovo de Colher' },
-    { id: 'casca', name: 'Casca Recheada' },
+    { id: 'all', name: 'Todos' },
+    { id: 'colher', name: 'De Colher' },
+    { id: 'casca', name: 'Cascas Recheadas' },
     { id: 'mini', name: 'Mini Ovos' },
   ];
 
@@ -27,17 +29,6 @@ export default function Produtos() {
       reviews: 128,
       description: 'Recheio de maracujá fresco em casca de chocolate branco',
       badge: '⭐ Mais Vendido',
-    },
-    {
-      id: 'prestigio',
-      name: 'Ovo Prestígio Deluxe',
-      category: 'colher',
-      price: 48.00,
-      image: '/assets/images/ovo-prestígio.png',
-      rating: 4.8,
-      reviews: 95,
-      description: 'Coco e chocolate amargo em perfeita harmonia',
-      badge: '🏆 Premium',
     },
     {
       id: 'ninho',
@@ -73,26 +64,37 @@ export default function Produtos() {
       badge: '🌸 Novo',
     },
     {
-      id: 'branco',
-      name: 'Ovo Chocolate Branco',
-      category: 'colher',
-      price: 40.00,
-      image: '/assets/images/ovo-chocolate-branco.png',
-      rating: 4.5,
-      reviews: 64,
-      description: 'Ovo de colher de chocolate branco puro',
-      badge: '💎 Clássico',
+      id: 'mini-pistache',
+      name: 'Mini Ovo Pistache Real',
+      category: 'mini',
+      price: 15.00,
+      image: '/assets/images/mini-ovos-cesta.png',
+      rating: 4.9,
+      reviews: 45,
+      description: 'Creme de pistache puro em mini casca amarga',
+      badge: '✨ Lançamento',
     },
     {
-      id: 'amargo',
-      name: 'Ovo Chocolate Amargo',
-      category: 'colher',
-      price: 42.00,
-      image: '/assets/images/ovo-chocolate-amargo.png',
+      id: 'mini-avelã',
+      name: 'Mini Ovo Avelã Crocante',
+      category: 'mini',
+      price: 12.00,
+      image: '/assets/images/mini-ovos-cesta.png',
       rating: 4.8,
-      reviews: 103,
-      description: 'Ovo de colher de chocolate amargo intenso',
-      badge: '⚫ Intenso',
+      reviews: 38,
+      description: 'Gianduia artesanal com pedaços de avelã',
+      badge: '🌰 Intenso',
+    },
+    {
+      id: 'mini-limao',
+      name: 'Mini Ovo Mousse de Limão',
+      category: 'mini',
+      price: 10.00,
+      image: '/assets/images/mini-ovos-cesta.png',
+      rating: 4.7,
+      reviews: 29,
+      description: 'Refrescante mousse de limão siciliano',
+      badge: '🍋 Refrescante',
     },
     {
       id: 'casca-branca',
@@ -102,7 +104,7 @@ export default function Produtos() {
       image: '/assets/images/casca-chocolate-branco.png',
       rating: 4.7,
       reviews: 89,
-      description: 'Casca de chocolate branco com recheio à escolha',
+      description: 'Casca de chocolate branco com recheio cremoso',
       badge: '✨ Popular',
     },
     {
@@ -113,19 +115,8 @@ export default function Produtos() {
       image: '/assets/images/casca-chocolate-amargo.png',
       rating: 4.6,
       reviews: 76,
-      description: 'Casca de chocolate amargo com recheio à escolha',
+      description: 'Casca de chocolate amargo 70% cacau',
       badge: '🎯 Recomendado',
-    },
-    {
-      id: 'mini-cesta',
-      name: 'Cesta de Mini Ovos',
-      category: 'mini',
-      price: 89.00,
-      image: '/assets/images/mini-ovos-cesta.png',
-      rating: 5.0,
-      reviews: 142,
-      description: 'Cesta com seleção de mini ovos variados',
-      badge: '🎁 Presente Perfeito',
     },
   ];
 
@@ -135,58 +126,207 @@ export default function Produtos() {
     return matchCategory && matchSearch;
   });
 
-  const toggleFavorite = (id: string) => {
-    setFavorites(prev => 
-      prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
-    );
+  const handleAddToCart = (produto: any) => {
+    addItem({
+      id: produto.id,
+      name: produto.name,
+      price: produto.price,
+      quantity: 1,
+      image: produto.image
+    });
+    toast.success(`${produto.name} adicionado ao carrinho!`);
+  };
+
+  // Personalizador State
+  const [step, setStep] = useState(0);
+  const [selections, setSelections] = useState<any>({
+    base: '',
+    estilo: '',
+    recheio: '',
+    brinde: '',
+    tamanho: '350g'
+  });
+
+  const prices: any = {
+    base: { 'Amarga': 10, 'Ao Leite': 10, 'Branca': 12, 'Crocante': 15 },
+    estilo: { 'De Colher': 20, 'Tradicional': 15 },
+    recheio: { 'Brigadeiro': 15, 'Ninho': 15, 'Nutella': 20, 'Pistache': 25 },
+    brinde: { 'Bombons Sortidos': 10, 'Surpresa': 15, 'Nenhum': 0 },
+    tamanho: { '250g': 0, '350g': 10, '500g': 20 }
+  };
+
+  const calculateCustomPrice = () => {
+    let total = 0;
+    if (selections.base) total += prices.base[selections.base];
+    if (selections.estilo) total += prices.estilo[selections.estilo];
+    if (selections.recheio) total += prices.recheio[selections.recheio];
+    if (selections.brinde) total += prices.brinde[selections.brinde];
+    if (selections.tamanho) total += prices.tamanho[selections.tamanho];
+    return total;
+  };
+
+  const handleAddCustomToCart = () => {
+    if (!selections.base || !selections.estilo || !selections.recheio) {
+      toast.error('Por favor, complete as escolhas principais!');
+      return;
+    }
+    
+    const price = calculateCustomPrice();
+    const details = `${selections.base}, ${selections.estilo}, ${selections.recheio}, ${selections.brinde}, ${selections.tamanho}`;
+    
+    addItem({
+      id: `custom-${Date.now()}`,
+      name: 'Ovo Personalizado PáscoArt',
+      price: price,
+      quantity: 1,
+      details: details,
+      image: '/assets/images/ovo-ninho-nutella.png'
+    });
+    
+    toast.success('Ovo personalizado adicionado ao carrinho!');
+    setStep(0);
+    setSelections({ base: '', estilo: '', recheio: '', brinde: '', tamanho: '350g' });
   };
 
   return (
     <Layout>
-      {/* Header */}
-      <section className="py-12 bg-gradient-to-br from-amber-50 to-orange-50 border-b border-amber-200">
-        <div className="container">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
-            <h1 className="text-4xl md:text-5xl font-bold text-amber-900 mb-4">
-              Nossos Produtos
-            </h1>
-            <p className="text-lg text-amber-800/70 max-w-2xl mx-auto">
-              Explore nossa seleção completa de ovos de páscoa artesanais com sabores irresistíveis
-            </p>
-          </motion.div>
+      {/* Monte seu Ovo Section */}
+      <section id="personalizar" className="py-20 bg-primary/5 relative overflow-hidden">
+        <div className="container relative z-10">
+          <div className="max-w-5xl mx-auto bg-card rounded-[40px] border border-border shadow-2xl overflow-hidden flex flex-col md:flex-row">
+            <div className="md:w-1/3 bg-primary p-10 text-primary-foreground flex flex-col justify-center">
+              <motion.div 
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mb-6"
+              >
+                <Sparkles className="w-10 h-10" />
+              </motion.div>
+              <h2 className="text-4xl font-black mb-4 leading-tight">Monte seu Próprio Ovo</h2>
+              <p className="opacity-80">Personalize cada detalhe e crie o presente perfeito.</p>
+              
+              <div className="mt-10 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step >= 0 ? 'bg-white text-primary' : 'border-white/30'}`}>1</div>
+                  <span className={`font-bold ${step >= 0 ? 'opacity-100' : 'opacity-40'}`}>Base</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step >= 1 ? 'bg-white text-primary' : 'border-white/30'}`}>2</div>
+                  <span className={`font-bold ${step >= 1 ? 'opacity-100' : 'opacity-40'}`}>Estilo</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step >= 2 ? 'bg-white text-primary' : 'border-white/30'}`}>3</div>
+                  <span className={`font-bold ${step >= 2 ? 'opacity-100' : 'opacity-40'}`}>Recheio</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1 p-10 md:p-16">
+              <AnimatePresence mode="wait">
+                {step === 0 && (
+                  <motion.div key="step0" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                    <h3 className="text-2xl font-bold">Escolha a Casca (Base)</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Object.keys(prices.base).map(opt => (
+                        <button 
+                          key={opt}
+                          onClick={() => { setSelections({...selections, base: opt}); setStep(1); }}
+                          className={`p-6 rounded-2xl border-2 transition-all text-left group ${selections.base === opt ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
+                        >
+                          <span className="block font-bold text-lg">{opt}</span>
+                          <span className="text-sm text-muted-foreground">+ R$ {prices.base[opt].toFixed(2)}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
+                {step === 1 && (
+                  <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                    <h3 className="text-2xl font-bold">Estilo do Ovo</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Object.keys(prices.estilo).map(opt => (
+                        <button 
+                          key={opt}
+                          onClick={() => { setSelections({...selections, estilo: opt}); setStep(2); }}
+                          className={`p-6 rounded-2xl border-2 transition-all text-left ${selections.estilo === opt ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
+                        >
+                          <span className="block font-bold text-lg">{opt}</span>
+                          <span className="text-sm text-muted-foreground">+ R$ {prices.estilo[opt].toFixed(2)}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <Button variant="ghost" onClick={() => setStep(0)}>Voltar</Button>
+                  </motion.div>
+                )}
+
+                {step === 2 && (
+                  <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                    <h3 className="text-2xl font-bold">Recheio Gourmet</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Object.keys(prices.recheio).map(opt => (
+                        <button 
+                          key={opt}
+                          onClick={() => { setSelections({...selections, recheio: opt}); setStep(3); }}
+                          className={`p-6 rounded-2xl border-2 transition-all text-left ${selections.recheio === opt ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
+                        >
+                          <span className="block font-bold text-lg">{opt}</span>
+                          <span className="text-sm text-muted-foreground">+ R$ {prices.recheio[opt].toFixed(2)}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <Button variant="ghost" onClick={() => setStep(1)}>Voltar</Button>
+                  </motion.div>
+                )}
+
+                {step === 3 && (
+                  <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                    <h3 className="text-2xl font-bold">Quase lá! Resumo</h3>
+                    <div className="bg-muted p-6 rounded-2xl space-y-3">
+                      <div className="flex justify-between"><span>Base:</span> <span className="font-bold">{selections.base}</span></div>
+                      <div className="flex justify-between"><span>Estilo:</span> <span className="font-bold">{selections.estilo}</span></div>
+                      <div className="flex justify-between"><span>Recheio:</span> <span className="font-bold">{selections.recheio}</span></div>
+                      <div className="border-t border-border pt-3 mt-3 flex justify-between text-xl">
+                        <span className="font-bold">Preço Total</span>
+                        <span className="font-black text-primary">R$ {calculateCustomPrice().toFixed(2)}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-4">
+                      <Button variant="outline" className="flex-1 rounded-xl h-14" onClick={() => setStep(0)}>Reiniciar</Button>
+                      <Button className="flex-[2] rounded-xl h-14 font-bold" onClick={handleAddCustomToCart}>Adicionar ao Carrinho</Button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Filters Section */}
-      <section className="py-8 bg-white border-b border-amber-100 sticky top-0 z-40">
+      <section className="py-12 bg-background border-b border-border sticky top-20 z-40 backdrop-blur-md bg-background/80">
         <div className="container">
-          <div className="flex flex-col md:flex-row gap-4 items-center">
-            {/* Search */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-amber-600" />
+          <div className="flex flex-col md:flex-row gap-6 items-center">
+            <div className="flex-1 relative w-full">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Buscar produtos..."
+                placeholder="O que você deseja hoje?..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-full border-2 border-amber-200 focus:border-amber-600 focus:outline-none transition-colors bg-amber-50"
+                className="w-full pl-14 pr-6 py-4 rounded-full border-2 border-border focus:border-primary focus:outline-none transition-all bg-muted/30 font-medium"
               />
             </div>
 
-            {/* Category Filter */}
-            <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
+            <div className="flex gap-3 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
               {categories.map(cat => (
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-4 py-2 rounded-full whitespace-nowrap font-semibold transition-all ${
+                  className={`px-6 py-3 rounded-full whitespace-nowrap font-bold transition-all ${
                     selectedCategory === cat.id
-                      ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg'
-                      : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
                   {cat.name}
@@ -198,9 +338,9 @@ export default function Produtos() {
       </section>
 
       {/* Products Grid */}
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-background">
         <div className="container">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {filteredProdutos.map((produto, index) => (
               <motion.div
                 key={produto.id}
@@ -208,115 +348,46 @@ export default function Produtos() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
-                className="group bg-white rounded-3xl overflow-hidden border-2 border-amber-200 hover:border-orange-400 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+                className="group bg-card rounded-[32px] overflow-hidden border border-border hover:border-primary/50 shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col"
               >
-                {/* Image Container */}
-                <div className="relative h-80 overflow-hidden bg-gradient-to-br from-amber-100 to-orange-100">
+                <div className="relative h-72 overflow-hidden bg-muted/50">
                   <motion.img
                     src={produto.image}
                     alt={produto.name}
-                    className="w-full h-full object-cover"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.3 }}
+                    className="w-full h-full object-contain p-8"
+                    whileHover={{ scale: 1.1, rotate: 2 }}
                   />
-                  
-                  {/* Badge */}
-                  <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-400 to-orange-400 text-amber-900 px-4 py-2 rounded-full text-sm font-bold">
+                  <div className="absolute top-4 right-4 bg-primary/90 backdrop-blur-md text-primary-foreground px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">
                     {produto.badge}
                   </div>
-
-                  {/* Favorite Button */}
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => toggleFavorite(produto.id)}
-                    className="absolute top-4 left-4 p-3 bg-white/90 rounded-full shadow-lg hover:bg-white transition-all"
-                  >
-                    <Heart
-                      className={`w-6 h-6 transition-colors ${
-                        favorites.includes(produto.id)
-                          ? 'fill-red-500 text-red-500'
-                          : 'text-amber-600'
-                      }`}
-                    />
-                  </motion.button>
-
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
 
-                {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-amber-900 mb-2 group-hover:text-orange-600 transition-colors">
+                <div className="p-8 flex-1 flex flex-col">
+                  <h3 className="text-2xl font-black mb-3 group-hover:text-primary transition-colors">
                     {produto.name}
                   </h3>
-                  
-                  <p className="text-amber-800/70 text-sm mb-4">
+                  <p className="text-muted-foreground text-sm mb-6 flex-1">
                     {produto.description}
                   </p>
 
-                  {/* Rating */}
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="flex gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < Math.floor(produto.rating)
-                              ? 'fill-amber-400 text-amber-400'
-                              : 'text-amber-200'
-                          }`}
-                        />
-                      ))}
+                  <div className="flex items-center justify-between mt-auto pt-6 border-t border-border">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-muted-foreground uppercase">Preço</span>
+                      <span className="text-2xl font-black text-foreground">
+                        R$ {produto.price.toFixed(2)}
+                      </span>
                     </div>
-                    <span className="text-sm font-semibold text-amber-900">
-                      {produto.rating} ({produto.reviews})
-                    </span>
-                  </div>
-
-                  {/* Price and Button */}
-                  <div className="flex items-center justify-between pt-4 border-t border-amber-200">
-                    <span className="text-2xl font-bold text-gradient bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-                      R$ {produto.price.toFixed(2)}
-                    </span>
-                    <motion.a
-                      href={`https://wa.me/5512991895547?text=Olá! Gostaria de comprar ${produto.name} por R$ ${produto.price.toFixed(2)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="p-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full hover:shadow-lg transition-all group-hover:from-amber-600 group-hover:to-orange-600"
+                    <Button 
+                      onClick={() => handleAddToCart(produto)}
+                      className="rounded-2xl h-14 w-14 p-0 shadow-lg shadow-primary/20 hover:scale-110 transition-transform"
                     >
-                      <ShoppingCart className="w-5 h-5" />
-                    </motion.a>
+                      <Plus className="w-6 h-6" />
+                    </Button>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
-
-          {filteredProdutos.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-xl text-amber-900/70">Nenhum produto encontrado</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-amber-600 to-orange-600">
-        <div className="container text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Não encontrou o que procurava?
-          </h2>
-          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-            Entre em contato conosco via WhatsApp e conheça nossas opções de customização
-          </p>
-          <a href="https://wa.me/5512991895547?text=Olá! Gostaria de conhecer opções de customização" target="_blank" rel="noopener noreferrer">
-            <Button size="lg" className="rounded-full bg-white text-orange-600 hover:bg-orange-50 shadow-lg h-14 px-8 text-lg font-bold">
-              Fale Conosco
-            </Button>
-          </a>
         </div>
       </section>
     </Layout>

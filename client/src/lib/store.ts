@@ -10,39 +10,64 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: 'light', // Default to light as per reference site, but user can toggle
+      theme: 'light',
       toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
       setTheme: (theme) => set({ theme }),
     }),
     {
-      name: 'apezato-theme-storage',
+      name: 'pascoart-theme-storage',
     }
   )
 );
 
-interface ChatState {
-  isOpen: boolean;
-  toggleChat: () => void;
-  messages: Array<{ id: string; text: string; sender: 'user' | 'bot'; timestamp: number }>;
-  addMessage: (text: string, sender: 'user' | 'bot') => void;
+export interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: string;
+  details?: string;
 }
 
-export const useChatStore = create<ChatState>((set) => ({
-  isOpen: false,
-  toggleChat: () => set((state) => ({ isOpen: !state.isOpen })),
-  messages: [
+interface CartState {
+  items: CartItem[];
+  addItem: (item: CartItem) => void;
+  removeItem: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
+  clearCart: () => void;
+  total: number;
+}
+
+export const useCartStore = create<CartState>()(
+  persist(
+    (set, get) => ({
+      items: [],
+      addItem: (newItem) => {
+        const items = get().items;
+        const existingItem = items.find((i) => i.id === newItem.id);
+        
+        if (existingItem) {
+          set({
+            items: items.map((i) =>
+              i.id === newItem.id ? { ...i, quantity: i.quantity + newItem.quantity } : i
+            ),
+          });
+        } else {
+          set({ items: [...items, newItem] });
+        }
+      },
+      removeItem: (id) => set({ items: get().items.filter((i) => i.id !== id) }),
+      updateQuantity: (id, quantity) =>
+        set({
+          items: get().items.map((i) => (i.id === id ? { ...i, quantity } : i)),
+        }),
+      clearCart: () => set({ items: [] }),
+      get total() {
+        return get().items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+      },
+    }),
     {
-      id: 'welcome',
-      text: 'Olá! Sou a IA da Apezato. Como posso ajudar a escalar seu negócio hoje?',
-      sender: 'bot',
-      timestamp: Date.now(),
-    },
-  ],
-  addMessage: (text, sender) =>
-    set((state) => ({
-      messages: [
-        ...state.messages,
-        { id: Math.random().toString(36).substring(7), text, sender, timestamp: Date.now() },
-      ],
-    })),
-}));
+      name: 'pascoart-cart-storage',
+    }
+  )
+);

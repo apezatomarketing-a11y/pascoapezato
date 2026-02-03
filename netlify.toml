@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "dist/public"
+
+# Nota: Este projeto parece ser uma aplicação Full Stack (Express + React).
+# O Netlify serve arquivos estáticos por padrão. Para que o Painel Admin e a API (tRPC) funcionem,
+# você precisaria converter o servidor Express para Netlify Functions ou usar um serviço como Heroku/Vercel/Render.
+# Esta configuração corrige o erro 404 do roteamento frontend.
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

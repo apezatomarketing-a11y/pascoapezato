@@ -10,6 +10,4 @@
   to = "/index.html"
   status = 200
 
-# Nota: Este projeto é uma aplicação Full Stack. 
-# O Netlify serve apenas os arquivos estáticos. 
-# Para o Admin funcionar, você precisará configurar as variáveis de ambiente no painel do Netlify.
+# Força o Netlify a reconhecer a pasta de build do Vite

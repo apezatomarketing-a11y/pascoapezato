@@ -1,16 +1,12 @@
 [build]
-  # Força o uso do npm e o caminho correto de saída do Vite
-  command = "npm install && npm run build"
+  command = "pnpm build"
   publish = "dist/public"
 
 [build.environment]
   NODE_VERSION = "20"
-  NPM_FLAGS = "--version"
+  PNPM_VERSION = "10.4.1"
 
 [[redirects]]
-  # Essencial para Single Page Applications (React/Wouter)
   from = "/*"
   to = "/index.html"
   status = 200
-
-# Esta configuração sobrescreve as definições manuais do painel do Netlify.
